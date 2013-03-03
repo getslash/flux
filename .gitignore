@@ -1,0 +1,5 @@
+*.pyc
+.vagrant
+*.egg-info
+build
+.tox
