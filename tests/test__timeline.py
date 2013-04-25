@@ -44,6 +44,7 @@ class TimeFactorTest(TestCase):
     def setUp(self):
         super(TimeFactorTest, self).setUp()
         self._time = 1337.0
+        self._callback_calls = []
         self.forge = forge.Forge()
         self.forge.replace_with(timeline_module, "_real_time", self.time)
         self.forge.replace_with(timeline_module, "_real_sleep", self.sleep)
@@ -53,6 +54,8 @@ class TimeFactorTest(TestCase):
         self.forge.verify()
         self.forge.reset()
         super(TimeFactorTest, self).tearDown()
+    def callback(self):
+        self._callback_calls.append(self.timeline.time())
     def time(self):
         return self._time
     def sleep(self, seconds):
@@ -62,6 +65,16 @@ class TimeFactorTest(TestCase):
         start_time = self.timeline.time()
         self.sleep(10)
         self.assertEquals(self.timeline.time(), start_time + 10)
+    def test__scheduled_callbacks(self):
+        start_time = self.timeline.time()
+        schedule_delay = 5
+        schedule_time = start_time + schedule_delay
+        self.timeline.schedule_callback(schedule_delay, self.callback)
+        self.sleep(10)
+        # need to trigger the callbacks
+        self.timeline.sleep(0)
+        self.assertEquals(self.timeline.time(), start_time + 10)
+        self.assertEquals(self._callback_calls, [schedule_time])
     def test__factor_change(self):
         expected_time = self.timeline.time()
         for index, (factor, sleep) in enumerate([
