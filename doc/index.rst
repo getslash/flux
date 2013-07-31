@@ -84,10 +84,10 @@ So coming back to the original code, that's how we'd test it with timeline:
 	 # testing code
 	 def test():
 	     timeline = Timeline()
-		 timeline.set_time_factor(0)
-		 timeline.schedule_callback((60 * 60 * 24) + 1, _satisfy_predicate)
-		 long_running_func(_sleep=timeline.sleep, _time=timeline.time)
-		 assert_notified_for_long_wait()
+	     timeline.set_time_factor(0)
+	     timeline.schedule_callback((60 * 60 * 24) + 1, _satisfy_predicate)
+	     long_running_func(_sleep=timeline.sleep, _time=timeline.time)
+	     assert_notified_for_long_wait()
 
 
 .. autoclass:: flux.timeline.Timeline
