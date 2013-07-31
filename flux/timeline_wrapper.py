@@ -6,9 +6,10 @@ class TimelineWrapper(object):
         super(TimelineWrapper, self).__init__()
         self._timeline = timeline
 
-    @property
-    def __class__(self):
-        return Timeline
+    def __getattribute__(self, name):
+        if name == '__class__':
+            return type(self._timeline)
+        return super(TimelineWrapper, self).__getattribute__(name)
 
     def set(self, timeline):
         self._timeline = timeline

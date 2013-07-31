@@ -1,6 +1,9 @@
 import forge
 import functools
-from unittest import TestCase
+try:
+    from unittest2 import TestCase
+except ImportError:
+    from unittest import TestCase
 import flux
 from flux import timeline as timeline_module
 from flux.sequence import Sequence
@@ -89,7 +92,7 @@ class TimeFactorTest(TestCase):
             self.assertEquals(vtime_before_factor_change, vtime_after_factor_change, "set_time_factor() unexpectedly changed virtual time!")
             self.sleep(sleep)
             expected_time += (sleep * factor)
-            self.assertEquals(expected_time, self.timeline.time(), "Sleep #{} did not sleep as expected".format(index))
+            self.assertEquals(expected_time, self.timeline.time(), "Sleep #{0} did not sleep as expected".format(index))
 
 class ScheduleTest(TimelineTestBase):
     def setUp(self):
