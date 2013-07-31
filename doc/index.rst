@@ -108,6 +108,20 @@ Flux contains a configurable global proxy, called ``current_timeline``, which ca
 
     time.sleep(100)
 
+You can replace the current global timeline at any time using ``set``:
+
+.. code-block:: python
+
+    flux.current_timeline.set(flux.Timeline())
+ 
+However, in most cases it should just be enough to interact with it directly, and all modules using it will automatically use the changed timeline:
+
+.. code-block:: python
+
+    flux.current_timeline.set_time_factor(1000000)
+
+
+
 Indices and tables
 ==================
 
