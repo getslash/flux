@@ -1,6 +1,7 @@
 import forge
 import functools
 from unittest import TestCase
+import flux
 from flux import timeline as timeline_module
 from flux.sequence import Sequence
 
@@ -155,3 +156,18 @@ class ScheduleSequenceTest(TimelineTestBase):
         self.seq.stop()
         self.timeline.sleep(i + 1)
         self.assertEquals(self.value, i)
+
+class CurrentTimeLineTest(TestCase):
+
+    def test__current_timeline_available(self):
+        self.assertIsInstance(flux.current_timeline, timeline_module.Timeline)
+        self.assertIsNot(type(flux.current_timeline), timeline_module.Timeline)
+
+    def test__current_timeline_replacing(self):
+        self.addCleanup(flux.current_timeline.set, flux.current_timeline.get)
+        new_timeline = timeline_module.Timeline()
+        new_factor = 12345
+        flux.current_timeline.set(new_timeline)
+        flux.current_timeline.set_time_factor(new_factor)
+        self.assertEquals(flux.current_timeline.get_time_factor(), new_factor)
+        self.assertEquals(new_timeline.get_time_factor(), new_factor)

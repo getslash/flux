@@ -94,6 +94,20 @@ So coming back to the original code, that's how we'd test it with timeline:
   :members:
   :undoc-members:
 
+Global Timeline
+---------------
+
+Flux contains a configurable global proxy, called ``current_timeline``, which can be set and used by everyone. This makes writing flux-compatible code very easy:
+
+.. code-block:: python
+
+    try:
+        from flux import current_timeline as time
+    except ImportError:
+        import time # fallback in case flux is not installed
+
+    time.sleep(100)
+
 Indices and tables
 ==================
 

@@ -25,6 +25,13 @@ class Timeline(object):
             raise ValueError("Cannot set negative time factor")
         self._correct_time()
         self._time_factor = factor
+
+    def get_time_factor(self):
+        """
+        Retrieves the current time factor
+        """
+        return self._time_factor
+
     def _correct_time(self):
         self._time_correction.virtual_time = self.time()
         self._time_correction.real_time = _real_time()
