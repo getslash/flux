@@ -89,6 +89,10 @@ class TimeFactorTest(TestCase):
     def test__factor_changes_fake_sleeps(self):
         self._test__factor_changes(real_sleep=False)
 
+    def test__freeze(self):
+        self.timeline.freeze()
+        self.assertEquals(self.timeline.get_time_factor(), 0)
+
     def _test__factor_changes(self, real_sleep):
         expected_virtual_time = self.timeline.time()
         expected_real_time = self._real_time

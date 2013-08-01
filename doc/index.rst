@@ -40,22 +40,28 @@ Flux contains the :class:`.Timeline` class. This class lets you mock time progre
 
 	>>> virtual_start_time = t.time()
 
-:func:`.Timeline.set_time_factor` sets the *time factor*, or in other words, the ratio between the real world time and the virtual time. A factor of 1 would mean that the virtual timeline progresses just like the real world time. A factor of 1000 means it progresses 1000 times faster, etc.
+:func:`.Timeline.sleep` behaves just like time.sleep(), sleeping the desired amount of seconds and advancing the virtual time. This seems useless, but when we shed some light on time factors its usefullness becomes more apparent.
 
-A factor of zero is especially interesting for testing, since it freezes time altogether:
+
+Time Factors
+------------
+
+Flux allows you to control the ratio between the time in the virtual timeline and the real one. This is called a *time factor*, and is the multiplier needed on the real time to obtain the virtual time. For instance, a time factor of 2 means that for each seconds in the real world, 2 seconds will pass in the virtual timeline. Setting the time factor for a timeline object is done with the :func:`set_time_factor function <.Timeline.set_time_factor>`.
+
+Controlling the time factor is useful for many cases. For instance, you can accelerate simulated processes without changing the sleep()/time() calls in the simulating code.
+
+A special case that is worth mentioning is the time factor of zero. It is very useful for unit tests to alleviate side effects of real time, and avoid ugly pieces of code like this:
 
 .. code-block:: python
 
-	>>> t.set_time_factor(0)
+        >>> self.assertAlmostEquals(time(), start_time + sleep_seconds)
 
-:func:`.Timeline.sleep` behaves just like time.sleep(), advancing the virtual time. For a time factor of zero, this is the only way to advance the time. This is important for testing since it exposes race conditions and code that does not properly wait on conditions and works "by chance":
+The above is usually needed because it is hard to estimate the time it takes to perform Python statements, which always adds a bit to the time deltas. Freezing your timeline will allow to test the exact effect of ``sleep`` and ``time`` calls on the timeline. This is so useful, in fact, that a shortcut exists for it -- :func:`.Timeline.freeze`.
 
-.. code-block:: python
+.. note:: for time factor zero, calls to the ``sleep`` method of the timeline object are the only way to advance its current time.
 
-	>>> virtual_start_time = t.time()
-	>>> t.sleep(10)
-	>>> t.time() == virtual_start_time + 10
-	True
+Scheduling Timed Events
+-----------------------
 
 :func:`.Timeline.schedule_callback` schedules a function to be called later in the virtual timeline. It is called for you whenever someone sleeps on the virtual timeline.
 

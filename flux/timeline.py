@@ -15,6 +15,7 @@ class Timeline(object):
         self._scheduled = []
         self._time_factor = 1
         self._time_correction = TimeCorrection(start_time, current_time)
+
     def set_time_factor(self, factor):
         """
         Sets the time factor -- the factor by which the virtual time advances compared to the real
@@ -31,6 +32,12 @@ class Timeline(object):
         Retrieves the current time factor
         """
         return self._time_factor
+
+    def freeze(self):
+        """
+        Shortcut for :func:`.set_time_factor`(0)
+        """
+        self.set_time_factor(0)
 
     def _correct_time(self):
         self._time_correction.virtual_time = self.time()
