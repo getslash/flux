@@ -47,7 +47,7 @@ class TimelineAPITest(TimelineTestBase):
 class TimeFactorTest(TestCase):
     def setUp(self):
         super(TimeFactorTest, self).setUp()
-        self._time = 1337.0
+        self._real_time = self._start_real_time = 1337.0
         self._callback_calls = []
         self.forge = forge.Forge()
         self.forge.replace_with(timeline_module, "_real_time", self.time)
@@ -61,14 +61,17 @@ class TimeFactorTest(TestCase):
     def callback(self):
         self._callback_calls.append(self.timeline.time())
     def time(self):
-        return self._time
+        return self._real_time
     def sleep(self, seconds):
         assert seconds >= 0
-        self._time += seconds
+        self._real_time += seconds
+
     def test__default_factor(self):
         start_time = self.timeline.time()
         self.sleep(10)
         self.assertEquals(self.timeline.time(), start_time + 10)
+        self.assertEquals(self._real_time, self._start_real_time + 10)
+
     def test__scheduled_callbacks(self):
         start_time = self.timeline.time()
         schedule_delay = 5
@@ -79,20 +82,41 @@ class TimeFactorTest(TestCase):
         self.timeline.sleep(0)
         self.assertEquals(self.timeline.time(), start_time + 10)
         self.assertEquals(self._callback_calls, [schedule_time])
-    def test__factor_change(self):
-        expected_time = self.timeline.time()
+
+    def test__factor_changes_real_sleeps(self):
+        self._test__factor_changes(real_sleep=True)
+
+    def test__factor_changes_fake_sleeps(self):
+        self._test__factor_changes(real_sleep=False)
+
+    def _test__factor_changes(self, real_sleep):
+        expected_virtual_time = self.timeline.time()
+        expected_real_time = self._real_time
         for index, (factor, sleep) in enumerate([
             (1, 20),
             (2.5, 3),
             (0.5, 70),
+            (0, 30),
             ]):
             vtime_before_factor_change = self.timeline.time()
             self.timeline.set_time_factor(factor)
             vtime_after_factor_change = self.timeline.time()
             self.assertEquals(vtime_before_factor_change, vtime_after_factor_change, "set_time_factor() unexpectedly changed virtual time!")
-            self.sleep(sleep)
-            expected_time += (sleep * factor)
-            self.assertEquals(expected_time, self.timeline.time(), "Sleep #{0} did not sleep as expected".format(index))
+            if real_sleep:
+                self.sleep(sleep)
+                expected_virtual_time += (sleep * factor)
+                expected_real_time += sleep
+            else:
+                self.timeline.sleep(sleep)
+                expected_virtual_time += sleep
+                if factor != 0:
+                    expected_real_time += sleep / factor
+            self._assert_equals(expected_virtual_time, self.timeline.time(), "Sleep {0}X{1} did not sleep virtual time as expected".format(sleep, factor))
+            self._assert_equals(expected_real_time, self._real_time, "Sleep {0}X{1} did not sleep real time as expected".format(sleep, factor))
+
+    def _assert_equals(self, a, b, msg):
+        assert a == b, "{0} ({1} != {2})".format(msg, a, b)
+
 
 class ScheduleTest(TimelineTestBase):
     def setUp(self):

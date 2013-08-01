@@ -36,20 +36,26 @@ class Timeline(object):
         self._time_correction.virtual_time = self.time()
         self._time_correction.real_time = _real_time()
         self._time_correction.shift = 0 # shift stems from the previous correction...
+
     def sleep(self, seconds):
         """
         Sleeps a given number of seconds in the virtual timeline
         """
         if seconds < 0:
             raise ValueError("Cannot sleep negative number of seconds")
-        self.set_time(self.time() + seconds)
+        if self._time_factor == 0:
+            self.set_time(self.time() + seconds)
+        else:
+            _real_sleep(seconds / self._time_factor)
         self.trigger_past_callbacks()
+
     def sleep_wait_all_scheduled(self):
         """
         Sleeps enough time for all scheduled callbacks to occur
         """
         while self._scheduled:
             self.sleep(max(0, self._scheduled[0][0]-self.time()))
+
     def trigger_past_callbacks(self):
         current_time = self.time()
         while self._scheduled and self._scheduled[0][0] <= current_time:
