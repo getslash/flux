@@ -19,9 +19,9 @@ The need for Flux is realized if you think about testing a code like the followi
 	    start_time = time.time()
 	    while not some_predicate():
 	        if time.time() - start_time > (60 * 60 * 24):
-			    LOG("This has been over a day now!!!")
-				notify_long_wait()
-			time.sleep(30)
+		    LOG("This has been over a day now!!!")
+		    notify_long_wait()
+		time.sleep(30)
 
 Let's say you have a test case in place that makes sure the notification function gets triggered after one day of waiting. How do you test it?
 
@@ -77,9 +77,9 @@ So coming back to the original code, that's how we'd test it with timeline:
 	    start_time = _time()
 	    while not some_predicate():
 	        if _time() - start_time > (60 * 60 * 24):
-			    LOG("This has been over a day now!!!")
-				notify_long_wait()
-			_sleep(30)
+        	    LOG("This has been over a day now!!!")
+		    notify_long_wait()
+		_sleep(30)
      
 	 # testing code
 	 def test():
