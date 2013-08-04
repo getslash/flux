@@ -1,3 +1,4 @@
+import types
 import forge
 import functools
 try:
@@ -191,8 +192,7 @@ class ScheduleSequenceTest(TimelineTestBase):
 class CurrentTimeLineTest(TestCase):
 
     def test__current_timeline_available(self):
-        self.assertIsInstance(flux.current_timeline, timeline_module.Timeline)
-        self.assertIsNot(type(flux.current_timeline), timeline_module.Timeline)
+        self.assertIs(type(flux.current_timeline), types.ModuleType)
 
     def test__current_timeline_replacing(self):
         self.addCleanup(flux.current_timeline.set, flux.current_timeline.get)
