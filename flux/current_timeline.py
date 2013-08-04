@@ -1,3 +1,4 @@
+import datetime as _datetime
 from .timeline import Timeline
 
 _current = Timeline()
@@ -19,3 +20,12 @@ for _method_name in dir(Timeline):
     if not _method_name.startswith("_"):
         globals()[_method_name] = _get_wrapper(_method_name)
 
+class datetime(_datetime.datetime):
+    @classmethod
+    def now(cls):
+        return _datetime.datetime.fromtimestamp(time())
+
+class date(_datetime.date):
+    @classmethod
+    def today(cls):
+        return datetime.now().date()

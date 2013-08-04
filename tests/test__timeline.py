@@ -1,4 +1,7 @@
+import calendar
 import types
+import time
+import datetime
 import forge
 import functools
 try:
@@ -195,10 +198,35 @@ class CurrentTimeLineTest(TestCase):
         self.assertIs(type(flux.current_timeline), types.ModuleType)
 
     def test__current_timeline_replacing(self):
-        self.addCleanup(flux.current_timeline.set, flux.current_timeline.get)
+        self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
         new_timeline = timeline_module.Timeline()
         new_factor = 12345
         flux.current_timeline.set(new_timeline)
         flux.current_timeline.set_time_factor(new_factor)
         self.assertEquals(flux.current_timeline.get_time_factor(), new_factor)
         self.assertEquals(new_timeline.get_time_factor(), new_factor)
+
+
+class DatetimeTest(TimelineTestBase):
+    def setUp(self):
+        super(DatetimeTest, self).setUp()
+        self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
+        flux.current_timeline.set(self.timeline)
+
+    def test__datetime_now(self):
+        now = flux.current_timeline.datetime.now()
+        self.assertIsInstance(now, datetime.datetime)
+        self.assertEquals(now.timetuple(), datetime.datetime.fromtimestamp(flux.current_timeline.time()).timetuple())
+
+    def test__datetime_utcnow(self):
+        now = flux.current_timeline.datetime.utcnow()
+        timestamp = calendar.timegm(now.utctimetuple())
+        self.assertEquals(now.utctimetuple(), time.gmtime(flux.current_timeline.time()))
+
+
+    def test__datetime_date_today(self):
+        now = flux.current_timeline.datetime.now()
+        today = flux.current_timeline.date.today()
+        self.assertIsInstance(now, datetime.date)
+        self.assertEquals(now.date(), today)
+
