@@ -14,6 +14,7 @@ class GeventCurrentTimeLineTest(CurrentTimeLineTest):
     def setUp(self):
         super(GeventCurrentTimeLineTest, self).setUp()
         timeline = GeventTimeline()
+        self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
         flux.current_timeline.set(timeline)
 
 class GeventScheduleSequenceTest(ScheduleSequenceTest):
@@ -23,6 +24,7 @@ class GeventScheduleSequenceTest(ScheduleSequenceTest):
 class GeventDatetimeTest(DatetimeTest):
     def _get_timeline(self):
         timeline = GeventTimeline()
+        self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
         flux.current_timeline.set(timeline)
         return timeline
 
