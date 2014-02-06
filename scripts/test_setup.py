@@ -11,8 +11,9 @@ if __name__ == '__main__':
     deps = [
         "nose",
         "pyforge",
-        "gevent"
     ]
+    if sys.version_info < (3, 0):
+        deps.append("gevent")
     if sys.version_info < (2, 7):
         deps.append("unittest2")
 
