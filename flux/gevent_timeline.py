@@ -1,8 +1,8 @@
 from .timeline import Timeline
 
 class GeventTimeline(Timeline):
-    def sleep(self, time):
-        super(GeventTimeline, self).sleep(time)
+    def sleep(self, seconds):
+        super(GeventTimeline, self).sleep(seconds)
         if self._time_factor == 0:
             self._real_sleep(0.0)
     def _real_sleep(self, seconds):
