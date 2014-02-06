@@ -5,8 +5,6 @@ import functools
 import heapq
 
 class Timeline(object):
-    _real_sleep = time.sleep
-    _real_time = time.time
     def __init__(self, start_time=None):
         super(Timeline, self).__init__()
         current_time = self._real_time()
@@ -16,6 +14,12 @@ class Timeline(object):
         self._scheduled = []
         self._time_factor = 1
         self._time_correction = TimeCorrection(start_time, current_time)
+
+    def _real_sleep(self, seconds):
+        time.sleep(seconds)
+
+    def _real_time(self):
+        return time.time()
 
     def set_time_factor(self, factor):
         """
