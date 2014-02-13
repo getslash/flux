@@ -1,7 +1,6 @@
 #! /usr/bin/python
 import subprocess
 import sys
-import os
 
 def _execute(cmd):
     if 0 != subprocess.call(cmd, shell=True):
@@ -12,6 +11,11 @@ if __name__ == '__main__':
         "nose",
         "pyforge",
     ]
+    if sys.version_info < (3, 0):
+        try:
+            import __pypy__ # No gevent on pypy
+        except ImportError:
+            deps.append("gevent")
     if sys.version_info < (2, 7):
         deps.append("unittest2")
 

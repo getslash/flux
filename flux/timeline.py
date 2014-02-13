@@ -1,20 +1,25 @@
 import contextlib
 import datetime
-from time import time as _real_time
-from time import sleep as _real_sleep
+import time
 import functools
 import heapq
 
 class Timeline(object):
     def __init__(self, start_time=None):
         super(Timeline, self).__init__()
-        current_time = _real_time()
+        current_time = self._real_time()
         if start_time is None:
             start_time = current_time
         self._forced_time = None
         self._scheduled = []
         self._time_factor = 1
         self._time_correction = TimeCorrection(start_time, current_time)
+
+    def _real_sleep(self, seconds):
+        time.sleep(seconds)
+
+    def _real_time(self):
+        return time.time()
 
     def set_time_factor(self, factor):
         """
@@ -41,7 +46,7 @@ class Timeline(object):
 
     def _correct_time(self):
         self._time_correction.virtual_time = self.time()
-        self._time_correction.real_time = _real_time()
+        self._time_correction.real_time = self._real_time()
         self._time_correction.shift = 0 # shift stems from the previous correction...
 
     def sleep(self, seconds):
@@ -53,7 +58,7 @@ class Timeline(object):
         if self._time_factor == 0:
             self.set_time(self.time() + seconds)
         else:
-            _real_sleep(seconds / self._time_factor)
+            self._real_sleep(seconds / self._time_factor)
         self.trigger_past_callbacks()
 
     def sleep_wait_all_scheduled(self):
@@ -80,7 +85,7 @@ class Timeline(object):
         """
         if self._forced_time is not None:
             return self._forced_time
-        current_time = _real_time()
+        current_time = self._real_time()
         return self._time_correction.virtual_time + self._time_correction.shift + (current_time - self._time_correction.real_time) * self._time_factor
     @contextlib.contextmanager
     def _get_forced_time_context(self, time):

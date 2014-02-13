@@ -3,20 +3,21 @@ import types
 import time
 import datetime
 import forge
-import functools
 try:
     from unittest2 import TestCase
 except ImportError:
     from unittest import TestCase
 import flux
-from flux import timeline as timeline_module
+from flux.timeline import Timeline
 from flux.sequence import Sequence
 
 class TimelineTestBase(TestCase):
     def setUp(self):
         super(TimelineTestBase, self).setUp()
-        self.timeline = timeline_module.Timeline()
+        self.timeline = self._get_timeline()
         self.timeline.set_time_factor(0)
+    def _get_timeline(self):
+        return Timeline()
 
 class TimelineAPITest(TimelineTestBase):
     def test__time_does_not_progress(self):
@@ -53,10 +54,12 @@ class TimeFactorTest(TestCase):
         super(TimeFactorTest, self).setUp()
         self._real_time = self._start_real_time = 1337.0
         self._callback_calls = []
+        self._forge_timeline()
+    def _forge_timeline(self):
         self.forge = forge.Forge()
-        self.forge.replace_with(timeline_module, "_real_time", self.time)
-        self.forge.replace_with(timeline_module, "_real_sleep", self.sleep)
-        self.timeline = timeline_module.Timeline()
+        self.forge.replace_with(Timeline, "_real_time", self.time)
+        self.forge.replace_with(Timeline, "_real_sleep", self.sleep)
+        self.timeline = Timeline()
     def tearDown(self):
         self.forge.restore_all_replacements()
         self.forge.verify()
@@ -199,7 +202,7 @@ class CurrentTimeLineTest(TestCase):
 
     def test__current_timeline_replacing(self):
         self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
-        new_timeline = timeline_module.Timeline()
+        new_timeline = Timeline()
         new_factor = 12345
         flux.current_timeline.set(new_timeline)
         flux.current_timeline.set_time_factor(new_factor)
