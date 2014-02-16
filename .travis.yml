@@ -9,4 +9,4 @@ install:
   - "python setup.py develop"
   - "python scripts/test_setup.py"
 # command to run tests, e.g. python setup.py test
-script: nosetests -w tests
+script: py.test tests
