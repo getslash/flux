@@ -7,7 +7,7 @@ class Sequence(object):
     def run(self, timeline):
         self._running = True
         generator = self._run()
-        timeline.schedule_callback(0, self._tick, generator, timeline)
+        self._tick(generator, timeline)
     def is_running(self):
         return self._running
     def stop(self):

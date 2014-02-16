@@ -159,26 +159,31 @@ class ScheduleTest(TimelineTestBase):
         self.timeline.sleep(0)
 
 class ScheduleSequenceTest(TimelineTestBase):
+
     class MySequence(Sequence):
         def __init__(self, test, num_steps):
             super(ScheduleSequenceTest.MySequence, self).__init__()
             self.test = test
             self.num_steps = num_steps
         def _run(self):
+            self.test.value = 0
             for i in range(1, self.num_steps + 1):
                 yield self.sleep(i)
                 self.test.value = i
+
     def setUp(self):
         super(ScheduleSequenceTest, self).setUp()
         self.num_steps = 10
-        self.value = 0
+        self.value = None
         self.seq = self.MySequence(self, self.num_steps)
         self.assertFalse(self.seq.is_running())
         self.seq.run(self.timeline)
         self.assertTrue(self.seq.is_running())
+
     def tearDown(self):
         self.assertFalse(self.seq.is_running())
         super(ScheduleSequenceTest, self).tearDown()
+
     def test__schedule_sequence(self):
         for i in range(1, self.num_steps + 1):
             self.assertEquals(self.value, i - 1)
@@ -186,6 +191,7 @@ class ScheduleSequenceTest(TimelineTestBase):
             self.assertEquals(self.value, i - 1)
             self.timeline.sleep(1)
             self.assertEquals(self.value, i)
+
     def test__schedule_sequence_and_interrupt(self):
         for i in range(1, self.num_steps - 1):
             self.timeline.sleep(i)
@@ -232,4 +238,3 @@ class DatetimeTest(TimelineTestBase):
         today = flux.current_timeline.date.today()
         self.assertIsInstance(now, datetime.date)
         self.assertEquals(now.date(), today)
-
