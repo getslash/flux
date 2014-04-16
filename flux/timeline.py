@@ -68,6 +68,14 @@ class Timeline(object):
         while self._scheduled:
             self.sleep(max(0, self._scheduled[0][0]-self.time()))
 
+    def sleep_stop_first_scheduled(self, sleep_seconds):
+        """
+        Sleeps the given amount of time, but wakes up if a scheduled event exists before the destined end time
+        """
+        if self._scheduled:
+            sleep_seconds = min(max(0, self._scheduled[0][0]-self.time()), sleep_seconds)
+        self.sleep(sleep_seconds)
+
     def trigger_past_callbacks(self):
         current_time = self.time()
         while self._scheduled and self._scheduled[0][0] <= current_time:

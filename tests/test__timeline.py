@@ -11,22 +11,29 @@ import flux
 from flux.timeline import Timeline
 from flux.sequence import Sequence
 
+
 class TimelineTestBase(TestCase):
+
     def setUp(self):
         super(TimelineTestBase, self).setUp()
         self.timeline = self._get_timeline()
         self.timeline.set_time_factor(0)
+
     def _get_timeline(self):
         return Timeline()
 
+
 class TimelineAPITest(TimelineTestBase):
+
     def test__time_does_not_progress(self):
         self.assertEquals(self.timeline.time(), self.timeline.time())
+
     def test__sleep(self):
         start_time = self.timeline.time()
         sleep_time = 6.5
         self.timeline.sleep(sleep_time)
         self.assertEquals(self.timeline.time(), start_time + sleep_time)
+
     def test__sleep_wait_all_scheduled(self):
         start_time = self.timeline.time()
         self.timeline.schedule_callback(100, setattr, self, "called1", True)
@@ -35,40 +42,63 @@ class TimelineAPITest(TimelineTestBase):
         self.assertEquals(self.timeline.time(), start_time + 200)
         self.assertTrue(self.called1)
         self.assertTrue(self.called2)
+
+    def test__sleep_stop_first_scheduled_with_scheduled(self):
+        start_time = self.timeline.time()
+        self.timeline.schedule_callback(100, setattr, self, "called", True)
+        self.timeline.sleep_stop_first_scheduled(200)
+        assert self.called
+        assert self.timeline.time() == start_time + 100
+
+    def test__sleep_stop_first_scheduled_without_scheduled(self):
+        start_time = self.timeline.time()
+        self.timeline.sleep_stop_first_scheduled(200)
+        assert self.timeline.time() == start_time + 200
+
     def test__cannot_sleep_negative_seconds(self):
         with self.assertRaises(ValueError):
             self.timeline.sleep(-0.1)
+
     def test__cannot_sleep_negative_time_factor(self):
         with self.assertRaises(ValueError):
             self.timeline.set_time_factor(-0.1)
+
     def test__cannot_schedule_negative_delay(self):
         with self.assertRaises(ValueError):
-            self.timeline.schedule_callback(-0.1, lambda : None)
+            self.timeline.schedule_callback(-0.1, lambda: None)
+
     def test__cannot_set_past_time(self):
         self.timeline.set_time(self.timeline.time() + 10)
         with self.assertRaises(ValueError):
             self.timeline.set_time(self.timeline.time() - 1)
 
+
 class TimeFactorTest(TestCase):
+
     def setUp(self):
         super(TimeFactorTest, self).setUp()
         self._real_time = self._start_real_time = 1337.0
         self._callback_calls = []
         self._forge_timeline()
+
     def _forge_timeline(self):
         self.forge = forge.Forge()
         self.forge.replace_with(Timeline, "_real_time", self.time)
         self.forge.replace_with(Timeline, "_real_sleep", self.sleep)
         self.timeline = Timeline()
+
     def tearDown(self):
         self.forge.restore_all_replacements()
         self.forge.verify()
         self.forge.reset()
         super(TimeFactorTest, self).tearDown()
+
     def callback(self):
         self._callback_calls.append(self.timeline.time())
+
     def time(self):
         return self._real_time
+
     def sleep(self, seconds):
         assert seconds >= 0
         self._real_time += seconds
@@ -108,11 +138,13 @@ class TimeFactorTest(TestCase):
             (2.5, 3),
             (0.5, 70),
             (0, 30),
-            ]):
+        ]):
             vtime_before_factor_change = self.timeline.time()
             self.timeline.set_time_factor(factor)
             vtime_after_factor_change = self.timeline.time()
-            self.assertEquals(vtime_before_factor_change, vtime_after_factor_change, "set_time_factor() unexpectedly changed virtual time!")
+            self.assertEquals(
+                vtime_before_factor_change, vtime_after_factor_change,
+                "set_time_factor() unexpectedly changed virtual time!")
             if real_sleep:
                 self.sleep(sleep)
                 expected_virtual_time += (sleep * factor)
@@ -122,14 +154,17 @@ class TimeFactorTest(TestCase):
                 expected_virtual_time += sleep
                 if factor != 0:
                     expected_real_time += sleep / factor
-            self._assert_equals(expected_virtual_time, self.timeline.time(), "Sleep {0}X{1} did not sleep virtual time as expected".format(sleep, factor))
-            self._assert_equals(expected_real_time, self._real_time, "Sleep {0}X{1} did not sleep real time as expected".format(sleep, factor))
+            self._assert_equals(expected_virtual_time, self.timeline.time(),
+                                "Sleep {0}X{1} did not sleep virtual time as expected".format(sleep, factor))
+            self._assert_equals(expected_real_time, self._real_time,
+                                "Sleep {0}X{1} did not sleep real time as expected".format(sleep, factor))
 
     def _assert_equals(self, a, b, msg):
         assert a == b, "{0} ({1} != {2})".format(msg, a, b)
 
 
 class ScheduleTest(TimelineTestBase):
+
     def setUp(self):
         super(ScheduleTest, self).setUp()
         self.start_time = self.timeline.time()
@@ -137,20 +172,25 @@ class ScheduleTest(TimelineTestBase):
         self.called_count = 0
         self.called_time = None
         self.timeline.schedule_callback(self.sleep_time, self.callback)
+
     def callback(self):
         self.called_count += 1
         self.called_time = self.timeline.time()
+
     def tearDown(self):
         self.assertEquals(self.called_count, 1)
         self.assertEquals(self.called_time, self.start_time + self.sleep_time)
         super(ScheduleTest, self).tearDown()
+
     def test__one_sleep(self):
         self.timeline.sleep(self.sleep_time)
+
     def test__several_sleeps(self):
         for i in range(3):
             self.timeline.sleep(self.sleep_time / 4)
             self.assertEquals(self.called_count, 0)
         self.timeline.sleep(self.sleep_time)
+
     def test__advance_time(self):
         dest_time = self.start_time + self.sleep_time * 10
         self.timeline.set_time(dest_time)
@@ -158,13 +198,16 @@ class ScheduleTest(TimelineTestBase):
         self.assertEquals(self.called_count, 0)
         self.timeline.sleep(0)
 
+
 class ScheduleSequenceTest(TimelineTestBase):
 
     class MySequence(Sequence):
+
         def __init__(self, test, num_steps):
             super(ScheduleSequenceTest.MySequence, self).__init__()
             self.test = test
             self.num_steps = num_steps
+
         def _run(self):
             self.test.value = 0
             for i in range(1, self.num_steps + 1):
@@ -201,6 +244,7 @@ class ScheduleSequenceTest(TimelineTestBase):
         self.timeline.sleep(i + 1)
         self.assertEquals(self.value, i)
 
+
 class CurrentTimeLineTest(TestCase):
 
     def test__current_timeline_available(self):
@@ -217,6 +261,7 @@ class CurrentTimeLineTest(TestCase):
 
 
 class DatetimeTest(TimelineTestBase):
+
     def setUp(self):
         super(DatetimeTest, self).setUp()
         self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
@@ -225,13 +270,14 @@ class DatetimeTest(TimelineTestBase):
     def test__datetime_now(self):
         now = flux.current_timeline.datetime.now()
         self.assertIsInstance(now, datetime.datetime)
-        self.assertEquals(now.timetuple(), datetime.datetime.fromtimestamp(flux.current_timeline.time()).timetuple())
+        self.assertEquals(now.timetuple(), datetime.datetime.fromtimestamp(
+            flux.current_timeline.time()).timetuple())
 
     def test__datetime_utcnow(self):
         now = flux.current_timeline.datetime.utcnow()
         timestamp = calendar.timegm(now.utctimetuple())
-        self.assertEquals(now.utctimetuple(), time.gmtime(flux.current_timeline.time()))
-
+        self.assertEquals(now.utctimetuple(),
+                          time.gmtime(flux.current_timeline.time()))
 
     def test__datetime_date_today(self):
         now = flux.current_timeline.datetime.now()
