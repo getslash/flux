@@ -1,8 +1,10 @@
 import contextlib
 import datetime
-import time
 import functools
 import heapq
+import time
+from numbers import Number
+
 
 class Timeline(object):
     def __init__(self, start_time=None):
@@ -53,6 +55,8 @@ class Timeline(object):
         """
         Sleeps a given number of seconds in the virtual timeline
         """
+        if not isinstance(seconds, Number):
+            raise ValueError("Invalid number of seconds specified: {0!r}".format(seconds))
         if seconds < 0:
             raise ValueError("Cannot sleep negative number of seconds")
         if self._time_factor == 0:
