@@ -89,7 +89,7 @@ class Timeline(object):
     def set_time(self, time):
         delta = time - self.time()
         if delta < 0:
-            raise ValueError("Cannot set time to the past")
+            return # Can't move time backwards. Not an exception, if using threads.
         self._time_correction.shift += delta
     def time(self):
         """

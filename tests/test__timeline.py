@@ -69,8 +69,9 @@ class TimelineAPITest(TimelineTestBase):
 
     def test__cannot_set_past_time(self):
         self.timeline.set_time(self.timeline.time() + 10)
-        with self.assertRaises(ValueError):
-            self.timeline.set_time(self.timeline.time() - 1)
+        current_time = self.timeline.time()
+        self.timeline.set_time(self.timeline.time() - 1)
+        self.assertEqual(self.timeline.time(), current_time)
 
 
 class TimeFactorTest(TestCase):
