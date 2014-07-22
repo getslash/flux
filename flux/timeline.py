@@ -7,6 +7,7 @@ from numbers import Number
 
 
 class Timeline(object):
+
     def __init__(self, start_time=None):
         super(Timeline, self).__init__()
         current_time = self._real_time()
@@ -49,14 +50,16 @@ class Timeline(object):
     def _correct_time(self):
         self._time_correction.virtual_time = self.time()
         self._time_correction.real_time = self._real_time()
-        self._time_correction.shift = 0 # shift stems from the previous correction...
+        # shift stems from the previous correction...
+        self._time_correction.shift = 0
 
     def sleep(self, seconds):
         """
         Sleeps a given number of seconds in the virtual timeline
         """
         if not isinstance(seconds, Number):
-            raise ValueError("Invalid number of seconds specified: {0!r}".format(seconds))
+            raise ValueError(
+                "Invalid number of seconds specified: {0!r}".format(seconds))
         if seconds < 0:
             raise ValueError("Cannot sleep negative number of seconds")
         if self._time_factor == 0:
@@ -70,27 +73,31 @@ class Timeline(object):
         Sleeps enough time for all scheduled callbacks to occur
         """
         while self._scheduled:
-            self.sleep(max(0, self._scheduled[0][0]-self.time()))
+            self.sleep(max(0, self._scheduled[0].time - self.time()))
 
     def sleep_stop_first_scheduled(self, sleep_seconds):
         """
         Sleeps the given amount of time, but wakes up if a scheduled event exists before the destined end time
         """
         if self._scheduled:
-            sleep_seconds = min(max(0, self._scheduled[0][0]-self.time()), sleep_seconds)
+            sleep_seconds = min(
+                max(0, self._scheduled[0].time - self.time()), sleep_seconds)
         self.sleep(sleep_seconds)
 
     def trigger_past_callbacks(self):
         current_time = self.time()
-        while self._scheduled and self._scheduled[0][0] <= current_time:
-            call_at_time, callback = heapq.heappop(self._scheduled)
-            with self._get_forced_time_context(call_at_time):
-                callback()
+        while self._scheduled and self._scheduled[0].time <= current_time:
+            scheduled = heapq.heappop(self._scheduled)
+            with self._get_forced_time_context(scheduled.time):
+                scheduled.callback()
+
     def set_time(self, time):
         delta = time - self.time()
         if delta < 0:
-            return # Can't move time backwards. Not an exception, if using threads.
+            # Can't move time backwards. Not an exception, if using threads.
+            return
         self._time_correction.shift += delta
+
     def time(self):
         """
         Gets the virtual time
@@ -99,6 +106,7 @@ class Timeline(object):
             return self._forced_time
         current_time = self._real_time()
         return self._time_correction.virtual_time + self._time_correction.shift + (current_time - self._time_correction.real_time) * self._time_factor
+
     @contextlib.contextmanager
     def _get_forced_time_context(self, time):
         prev_forced_time = self._forced_time
@@ -107,18 +115,36 @@ class Timeline(object):
             yield
         finally:
             self._forced_time = prev_forced_time
+
     def schedule_callback(self, delay, callback, *args, **kwargs):
         if delay < 0:
             raise ValueError("Cannot schedule negative delays")
-        item = (self.time() + delay, functools.partial(callback, *args, **kwargs))
+        item = ScheduledItem(self.time() + delay, functools.partial(callback, *args, **kwargs))
         heapq.heappush(self._scheduled, item)
+
     def __repr__(self):
         return "<Timeline (@{})>".format(datetime.datetime.fromtimestamp(self.time()).ctime())
 
+
+class ScheduledItem(object):
+
+    def __init__(self, time, callback):
+        super(ScheduledItem, self).__init__()
+        self.time = time
+        self.callback = callback
+
+    def __lt__(self, other):
+        if not isinstance(other, ScheduledItem):
+            return NotImplemented
+        return self.time < other.time
+
+
 class TimeCorrection(object):
+
     """
     Utility class used for keeping records of time shifts or corrections
     """
+
     def __init__(self, virtual_time, real_time):
         super(TimeCorrection, self).__init__()
         self.virtual_time = virtual_time

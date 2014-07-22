@@ -1,15 +1,18 @@
 import calendar
-import types
-import time
 import datetime
+import functools
+import time
+import types
+
+import flux
 import forge
+from flux.sequence import Sequence
+from flux.timeline import Timeline
+
 try:
     from unittest2 import TestCase
 except ImportError:
     from unittest import TestCase
-import flux
-from flux.timeline import Timeline
-from flux.sequence import Sequence
 
 
 class TimelineTestBase(TestCase):
@@ -49,6 +52,12 @@ class TimelineAPITest(TimelineTestBase):
         self.timeline.sleep_stop_first_scheduled(200)
         assert self.called
         assert self.timeline.time() == start_time + 100
+
+    def test__schedule_functools_partial(self):
+        for i in range(5):
+            self.timeline.schedule_callback(100 + i, functools.partial(setattr, self, 'counter', i))
+        self.timeline.sleep_wait_all_scheduled()
+        assert self.counter == i
 
     def test__sleep_stop_first_scheduled_without_scheduled(self):
         start_time = self.timeline.time()
