@@ -95,6 +95,8 @@ So coming back to the original code, that's how we'd test it with timeline:
 	     long_running_func(_sleep=timeline.sleep, _time=timeline.time)
 	     assert_notified_for_long_wait()
 
+In some cases you might be interested in 'sleeping' until all scheduled callbacks have been triggered. This is done with :func:`.Timeline.sleep_wait_all_scheduled`.
+
 
 .. autoclass:: flux.timeline.Timeline
   :members:
