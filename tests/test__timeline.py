@@ -82,6 +82,11 @@ class TimelineAPITest(TimelineTestBase):
         self.timeline.set_time(self.timeline.time() - 1)
         self.assertEqual(self.timeline.time(), current_time)
 
+    def test__force_set_past_time(self):
+        current_time = self.timeline.time()
+        self.timeline.set_time(current_time - 10, allow_backwards=True)
+        self.assertEqual(self.timeline.time(), current_time - 10)
+
 
 class TimeFactorTest(TestCase):
 

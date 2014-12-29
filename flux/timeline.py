@@ -91,9 +91,9 @@ class Timeline(object):
             with self._get_forced_time_context(scheduled.time):
                 scheduled.callback()
 
-    def set_time(self, time):
+    def set_time(self, time, allow_backwards=False):
         delta = time - self.time()
-        if delta < 0:
+        if delta < 0 and not allow_backwards:
             # Can't move time backwards. Not an exception, if using threads.
             return
         self._time_correction.shift += delta
