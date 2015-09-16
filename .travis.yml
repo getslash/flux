@@ -1,25 +1,21 @@
 language: python
 sudo: false
 python:
-  - 2.6
-  - 2.7
-  - 3.2
-  - 3.3
-  - 3.4
-  - pypy
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: 
-  - pip install -e .
-  - python scripts/test_setup.py
-# command to run tests, e.g. python setup.py test
+- 2.6
+- 2.7
+- 3.2
+- 3.3
+- 3.4
+- pypy
+install:
+- pip install -e .
+- python scripts/test_setup.py
 script: py.test tests
 deploy:
   provider: pypi
   user: vmalloc
-  distributions: bdist_wheel
   password:
-    secure: sNOkUNFfWKGsRy4BI+1jyqycZGSMiXTLtpCrX1mTuvjddbndULrHL3ecIPsCno49/nPR4Gww+e9U3HXc8LKJ9qR4mJ8bVCNiHO5GlGVnpV+wdGh9LVnsU1LWwuD8uWlLyTSOKP+ZmerCw7tGACYiv0e9zp8SqZXCH6VS+sAGFxU=
+    secure: IiRY8I5mIBebKxMUNygddVLyyd0j9gRG5hly5r07nIeqqB01cUhrHgTnfqQPBbVYsDzFYRNM4p2+D94YlsRyO/ylGXehNpA/Dmb5tVDLtycbQVBx4rkRwEa0nfcXaF3MO1P0NHbEi3scVhLiaYqTGWsEKGIhUrgWyckuAh99FKo=
   on:
     tags: true
-    all_branches: true
     repo: vmalloc/flux
