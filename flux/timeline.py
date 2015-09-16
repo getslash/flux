@@ -65,7 +65,9 @@ class Timeline(object):
         if self._time_factor == 0:
             self.set_time(self.time() + seconds)
         else:
-            self._real_sleep(seconds / self._time_factor)
+            end_time = self.time() + seconds
+            while self.time() < end_time:
+                self._real_sleep(max(0, (end_time - self.time()) / self._time_factor))
         self.trigger_past_callbacks()
 
     def sleep_wait_all_scheduled(self):
