@@ -25,6 +25,10 @@ class datetime(_datetime.datetime):
     def now(cls):
         return _datetime.datetime.fromtimestamp(time())
 
+    @classmethod
+    def utcnow(cls):
+        return _datetime.datetime.utcfromtimestamp(time())
+
 class date(_datetime.date):
     @classmethod
     def today(cls):
