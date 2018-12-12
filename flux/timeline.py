@@ -11,12 +11,13 @@ class Timeline(object):
     def __init__(self, start_time=None):
         super(Timeline, self).__init__()
         current_time = self._real_time()
-        if start_time is None:
-            start_time = current_time
         self._forced_time = None
         self._scheduled = []
         self._time_factor = 1
-        self._time_correction = TimeCorrection(start_time, current_time)
+        self._time_correction = None
+
+        if start_time is not None:
+            self._correct_time(base=start_time)
 
     def _real_sleep(self, seconds):
         time.sleep(seconds)
@@ -47,7 +48,13 @@ class Timeline(object):
         """
         self.set_time_factor(0)
 
-    def _correct_time(self):
+    def _correct_time(self, base=None):
+        current_time = self._real_time()
+        if base is None:
+            base = current_time
+        if self._time_correction is None:
+            self._time_correction = TimeCorrection(base, current_time)
+
         self._time_correction.virtual_time = self.time()
         self._time_correction.real_time = self._real_time()
         # shift stems from the previous correction...
@@ -106,8 +113,10 @@ class Timeline(object):
         """
         if self._forced_time is not None:
             return self._forced_time
-        current_time = self._real_time()
-        return self._time_correction.virtual_time + self._time_correction.shift + (current_time - self._time_correction.real_time) * self._time_factor
+        returned = self._real_time()
+        if self._time_correction is not None:
+            returned = self._time_correction.virtual_time + self._time_correction.shift + (returned - self._time_correction.real_time) * self._time_factor
+        return returned
 
     @contextlib.contextmanager
     def _get_forced_time_context(self, time):
