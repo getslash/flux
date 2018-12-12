@@ -4,4 +4,4 @@
 build
 .tox
 dist
-.env
+.eggs
