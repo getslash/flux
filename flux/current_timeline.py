@@ -23,10 +23,14 @@ for _method_name in dir(Timeline):
 class datetime(_datetime.datetime):
     @classmethod
     def now(cls):
+        if not _current.is_modified():
+            return _datetime.datetime.now()
         return _datetime.datetime.fromtimestamp(time())
 
     @classmethod
     def utcnow(cls):
+        if not _current.is_modified():
+            return _datetime.datetime.utcnow()
         return _datetime.datetime.utcfromtimestamp(time())
 
 class date(_datetime.date):
