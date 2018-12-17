@@ -19,6 +19,9 @@ class Timeline(object):
         if start_time is not None:
             self._correct_time(base=start_time)
 
+    def is_modified(self):
+        return self._time_correction is not None
+
     def _real_sleep(self, seconds):
         time.sleep(seconds)
 
