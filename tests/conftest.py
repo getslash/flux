@@ -19,7 +19,7 @@ def forge(request):
 @pytest.fixture
 def mocked_time_module():
 
-    class _Mocked(object):
+    class _Mocked():
 
         def __init__(self):
             self._time = time.time()

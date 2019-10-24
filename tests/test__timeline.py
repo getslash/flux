@@ -18,7 +18,7 @@ except ImportError:
 class TimelineTestBase(TestCase):
 
     def setUp(self):
-        super(TimelineTestBase, self).setUp()
+        super().setUp()
         self.timeline = self._get_timeline()
         self.timeline.set_time_factor(0)
 
@@ -91,7 +91,7 @@ class TimelineAPITest(TimelineTestBase):
 class TimeFactorTest(TestCase):
 
     def setUp(self):
-        super(TimeFactorTest, self).setUp()
+        super().setUp()
         self._real_time = self._start_real_time = 1337.0
         self._callback_calls = []
         self._forge_timeline()
@@ -106,7 +106,7 @@ class TimeFactorTest(TestCase):
         self.forge.restore_all_replacements()
         self.forge.verify()
         self.forge.reset()
-        super(TimeFactorTest, self).tearDown()
+        super().tearDown()
 
     def callback(self):
         self._callback_calls.append(self.timeline.time())
@@ -181,7 +181,7 @@ class TimeFactorTest(TestCase):
 class ScheduleTest(TimelineTestBase):
 
     def setUp(self):
-        super(ScheduleTest, self).setUp()
+        super().setUp()
         self.start_time = self.timeline.time()
         self.sleep_time = 10
         self.called_count = 0
@@ -195,7 +195,7 @@ class ScheduleTest(TimelineTestBase):
     def tearDown(self):
         self.assertEqual(self.called_count, 1)
         self.assertEqual(self.called_time, self.start_time + self.sleep_time)
-        super(ScheduleTest, self).tearDown()
+        super().tearDown()
 
     def test__one_sleep(self):
         self.timeline.sleep(self.sleep_time)
@@ -219,7 +219,7 @@ class ScheduleSequenceTest(TimelineTestBase):
     class MySequence(Sequence):
 
         def __init__(self, test, num_steps):
-            super(ScheduleSequenceTest.MySequence, self).__init__()
+            super().__init__()
             self.test = test
             self.num_steps = num_steps
 
@@ -230,7 +230,7 @@ class ScheduleSequenceTest(TimelineTestBase):
                 self.test.value = i
 
     def setUp(self):
-        super(ScheduleSequenceTest, self).setUp()
+        super().setUp()
         self.num_steps = 10
         self.value = None
         self.seq = self.MySequence(self, self.num_steps)
@@ -240,7 +240,7 @@ class ScheduleSequenceTest(TimelineTestBase):
 
     def tearDown(self):
         self.assertFalse(self.seq.is_running())
-        super(ScheduleSequenceTest, self).tearDown()
+        super().tearDown()
 
     def test__schedule_sequence(self):
         for i in range(1, self.num_steps + 1):
@@ -278,7 +278,7 @@ class CurrentTimeLineTest(TestCase):
 class DatetimeTest(TimelineTestBase):
 
     def setUp(self):
-        super(DatetimeTest, self).setUp()
+        super().setUp()
         self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
         flux.current_timeline.set(self.timeline)
 

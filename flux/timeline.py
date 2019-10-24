@@ -6,10 +6,10 @@ import time
 from numbers import Number
 
 
-class Timeline(object):
+class Timeline():
 
     def __init__(self, start_time=None):
-        super(Timeline, self).__init__()
+        super().__init__()
         current_time = self._real_time()
         self._forced_time = None
         self._scheduled = []
@@ -140,10 +140,10 @@ class Timeline(object):
         return "<Timeline (@{})>".format(datetime.datetime.fromtimestamp(self.time()).ctime())
 
 
-class ScheduledItem(object):
+class ScheduledItem():
 
     def __init__(self, time, callback):
-        super(ScheduledItem, self).__init__()
+        super().__init__()
         self.time = time
         self.callback = callback
 
@@ -153,14 +153,14 @@ class ScheduledItem(object):
         return self.time < other.time
 
 
-class TimeCorrection(object):
+class TimeCorrection():
 
     """
     Utility class used for keeping records of time shifts or corrections
     """
 
     def __init__(self, virtual_time, real_time):
-        super(TimeCorrection, self).__init__()
+        super().__init__()
         self.virtual_time = virtual_time
         self.real_time = real_time
         self.shift = 0
