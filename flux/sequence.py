@@ -1,9 +1,9 @@
-class Sequence(object):
+class Sequence():
 
-    class sleep(object):
+    class sleep():
 
         def __init__(self, seconds):
-            super(Sequence.sleep, self).__init__()
+            super().__init__()
             self.seconds = seconds
     _running = False
 

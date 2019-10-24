@@ -12,7 +12,7 @@ class GeventTimeFactorTest(TimeFactorTest):
 
 class GeventCurrentTimeLineTest(CurrentTimeLineTest):
     def setUp(self):
-        super(GeventCurrentTimeLineTest, self).setUp()
+        super().setUp()
         timeline = GeventTimeline()
         self.addCleanup(flux.current_timeline.set, flux.current_timeline.get())
         flux.current_timeline.set(timeline)

@@ -2,7 +2,7 @@ from unittest import TestCase
 import os
 import doctest
 
-class _FakeTimeModule(object):
+class _FakeTimeModule():
     def time(self):
         return 0
     def sleep(self, seconds):
