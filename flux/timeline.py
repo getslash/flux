@@ -47,7 +47,7 @@ class Timeline():
 
     def freeze(self):
         """
-        Shortcut for :func:`.set_time_factor`(0)
+        Shortcut for :func:`.set_time_factor` (0)
         """
         self.set_time_factor(0)
 

@@ -5,3 +5,6 @@ build
 .tox
 dist
 .eggs
+.env
+AUTHORS
+ChangeLog
