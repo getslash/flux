@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`-` Update supported python versions (>= 3.6)
 * :feature:`12` Drop support for python version < 3.5
 
 * :release:`1.3.5 <17-12-2018>`
