@@ -51,6 +51,8 @@ Flux contains the :class:`.Timeline` class. This class lets you mock time progre
 
 :func:`.Timeline.sleep` behaves just like time.sleep(), sleeping the desired amount of seconds and advancing the virtual time. This seems useless, but when we shed some light on time factors its usefullness becomes more apparent.
 
+Flux also support `asyncio.sleep` by calling :func:`.Timeline.async_sleep`.
+
 
 Time Factors
 ------------
