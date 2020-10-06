@@ -6,6 +6,15 @@
 Welcome to Flux
 ===============
 
+Content
+-------
+
+.. toctree::
+   :maxdepth: 2
+
+   changelog
+
+
 What is Flux?
 -------------
 
@@ -42,6 +51,8 @@ Flux contains the :class:`.Timeline` class. This class lets you mock time progre
 
 :func:`.Timeline.sleep` behaves just like time.sleep(), sleeping the desired amount of seconds and advancing the virtual time. This seems useless, but when we shed some light on time factors its usefullness becomes more apparent.
 
+Flux also support `asyncio.sleep` by calling :func:`.Timeline.async_sleep`.
+
 
 Time Factors
 ------------
@@ -54,7 +65,10 @@ A special case that is worth mentioning is the time factor of zero. It is very u
 
 .. code-block:: python
 
-        >>> self.assertAlmostEquals(time(), start_time + sleep_seconds)
+        >>> start_time = t.time()
+        >>> sleep_seconds = 5
+        >>> t.sleep(sleep_seconds)
+        >>> assert t.time() == pytest.approx(start_time + sleep_seconds)
 
 The above is usually needed because it is hard to estimate the time it takes to perform Python statements, which always adds a bit to the time deltas. Freezing your timeline will allow to test the exact effect of ``sleep`` and ``time`` calls on the timeline. This is so useful, in fact, that a shortcut exists for it -- :func:`.Timeline.freeze`.
 
@@ -86,7 +100,7 @@ So coming back to the original code, that's how we'd test it with timeline:
         	    LOG("This has been over a day now!!!")
 		    notify_long_wait()
 		_sleep(30)
-     
+
 	 # testing code
 	 def test():
 	     timeline = Timeline()
@@ -121,7 +135,7 @@ You can replace the current global timeline at any time using ``set``:
 .. code-block:: python
 
     flux.current_timeline.set(flux.Timeline())
- 
+
 However, in most cases it should just be enough to interact with it directly, and all modules using it will automatically use the changed timeline:
 
 .. code-block:: python

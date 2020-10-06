@@ -1,3 +1,4 @@
+import asyncio
 import contextlib
 import datetime
 import functools
@@ -25,6 +26,9 @@ class Timeline():
     def _real_sleep(self, seconds):
         time.sleep(seconds)
 
+    async def _real_async_sleep(self, seconds):
+        await asyncio.sleep(seconds)
+
     def _real_time(self):
         return time.time()
 
@@ -47,7 +51,7 @@ class Timeline():
 
     def freeze(self):
         """
-        Shortcut for :func:`.set_time_factor`(0)
+        Shortcut for :func:`.set_time_factor` (0)
         """
         self.set_time_factor(0)
 
@@ -63,10 +67,21 @@ class Timeline():
         # shift stems from the previous correction...
         self._time_correction.shift = 0
 
+    async def async_sleep(self, seconds):
+        """
+        Async sleeps a given number of seconds in the virtual timeline
+        """
+        for sleep_sec in self._sleep_time_generator(seconds):
+            await self._real_async_sleep(sleep_sec)
+
     def sleep(self, seconds):
         """
         Sleeps a given number of seconds in the virtual timeline
         """
+        for sleep_sec in self._sleep_time_generator(seconds):
+            self._real_sleep(sleep_sec)
+
+    def _sleep_time_generator(self, seconds):
         if not isinstance(seconds, Number):
             raise ValueError(
                 "Invalid number of seconds specified: {0!r}".format(seconds))
@@ -77,7 +92,7 @@ class Timeline():
         else:
             end_time = self.time() + seconds
             while self.time() < end_time:
-                self._real_sleep(max(0, (end_time - self.time()) / self._time_factor))
+                yield max(0, (end_time - self.time()) / self._time_factor)
         self.trigger_past_callbacks()
 
     def sleep_wait_all_scheduled(self):

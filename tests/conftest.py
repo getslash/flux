@@ -1,6 +1,10 @@
-import time
-from forge import Forge
+from flux.timeline import Timeline
+import flux
 import pytest
+import time
+
+from functools import partial
+from forge import Forge
 
 
 @pytest.fixture
@@ -34,3 +38,11 @@ def mocked_time_module():
             self._time += increment
 
     return _Mocked()
+
+
+@pytest.fixture
+def timeline(request):
+    request.addfinalizer(partial(flux.current_timeline.set, flux.current_timeline.get()))
+    timeline = Timeline()
+    flux.current_timeline.set(timeline)
+    return timeline
