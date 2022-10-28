@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`-` Use ``pyproject.toml`` for project's metadata
 * :feature:`-` Support asyncio sleep for Timeline
 * :feature:`-` Update supported python versions (>= 3.6)
 * :feature:`12` Drop support for python version < 3.5
