@@ -11,7 +11,7 @@ doc: env
 env: .env/.up-to-date
 
 .env/.up-to-date: setup.py Makefile
-	python -m virtualenv .env
+	python3 -m venv .env
 	.env/bin/pip install -e .[testing,doc]
 	touch $@
 
