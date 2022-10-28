@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling>=0.25.1", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "flux"
+description = "Artificial time library"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "BSD 3-Clause License" }
+
+classifiers = [
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+]
+dynamic = ["version"]
+
+authors = [
+    { name = "Rotem Yaari", email = "vmalloc@gmail.com" },
+]
+
+[project.urls]
+"Homepage" = "https://github.com/getslash/flux"
+
+[project.optional-dependencies]
+testing = [
+    "pyforge",
+    "pytest>=5.4.0",
+    "gevent",
+    "pytest-asyncio",
+]
+doc = [
+    "alabaster",
+    "releases",
+    "Sphinx>=1.7.1",
+]
+
+[tool.hatch.version]
+source = "vcs"
