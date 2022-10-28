@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`-` Use GitHub actions (instead of Travis CI)
 * :feature:`-` Use ``pyproject.toml`` for project's metadata
 * :feature:`-` Support asyncio sleep for Timeline
 * :feature:`-` Update supported python versions (>= 3.6)
