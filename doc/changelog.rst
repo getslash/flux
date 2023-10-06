@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`-` Remove usage of deprecated `pkg_resources` API
 * :feature:`-` Use GitHub actions (instead of Travis CI)
 * :feature:`-` Use ``pyproject.toml`` for project's metadata
 * :feature:`-` Support asyncio sleep for Timeline
