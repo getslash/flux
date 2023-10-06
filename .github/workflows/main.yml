@@ -25,3 +25,17 @@ jobs:
           .env/bin/pip install -U setuptools pip
           .env/bin/pip install '.[testing]'
           .env/bin/pytest tests
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Building docs
+        run: |
+          python -m venv .env
+          .env/bin/pip install -U setuptools pip
+          .env/bin/pip install '.[doc]'
+          .env/bin/sphinx-build -a -W -E doc build/sphinx/html
