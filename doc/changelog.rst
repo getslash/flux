@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :feature:`-` Add python3.12 to supported versions
 * :feature:`-` Remove usage of deprecated `pkg_resources` API
 * :feature:`-` Use GitHub actions (instead of Travis CI)
 * :feature:`-` Use ``pyproject.toml`` for project's metadata
