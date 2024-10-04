@@ -1,6 +1,8 @@
 Changelog
 =========
 
+* :feature:`-` Update python versions >=3.8, <=3.13
+* :feature:`-` Use UV in CI
 * :feature:`-` Add python3.12 to supported versions
 * :feature:`-` Remove usage of deprecated `pkg_resources` API
 * :feature:`-` Use GitHub actions (instead of Travis CI)
