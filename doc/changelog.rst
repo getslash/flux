@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* :release:`1.4.0 <16-08-2025>`
 * :feature:`-` Update python versions >=3.8, <=3.13
 * :feature:`-` Use UV in CI
 * :feature:`-` Add python3.12 to supported versions
