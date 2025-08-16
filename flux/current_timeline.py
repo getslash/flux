@@ -30,8 +30,9 @@ class datetime(_datetime.datetime):
     @classmethod
     def utcnow(cls):
         if not _current.is_modified():
-            return _datetime.datetime.utcnow()
-        return _datetime.datetime.utcfromtimestamp(time())
+            return _datetime.datetime.now(_datetime.timezone.utc)
+        return _datetime.datetime.fromtimestamp(time(), _datetime.timezone.utc)
+
 
 class date(_datetime.date):
     @classmethod
